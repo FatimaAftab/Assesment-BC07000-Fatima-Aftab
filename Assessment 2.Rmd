@@ -1,0 +1,120 @@
+---
+title: "Assessment 2"
+author: "Fatima Aftab 4662948"
+date: '2022-03-09'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+
+fastfood <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2018/2018-09-04/fastfood_calories.csv')
+
+
+#Observations with more than 1000 calories
+
+fastfood %>%
+  filter(calories>1000)
+
+#more than 40 in total_fat and more than 80 in total_carb in the descending order and save them to a new variable (dataset) called `dont_eat_this`
+
+library(dplyr)
+dont_eat_this <- fastfood %>%
+  filter(total_fat > 40, total_carb > 80)
+
+arrange(dont_eat_this, desc(total_fat))
+
+
+#CASEWHEN
+
+new_data_with_heavy_food <- fastfood %>%
+  mutate(heavy_food = case_when(calories > 500 ~ "heavy", calories < 250 ~ "low", T ~ "average"))
+
+spec(new_data_with_heavy_food)
+
+new_data_with_heavy_food %>%
+  count(heavy_food)
+
+#display using skimr
+
+library(skimr)
+
+skim(new_data_with_heavy_food)
+
+skim(fastfood)
+
+#Present the count observations from each restaurant in a descending order
+
+fastfood %>%
+  count(restaurant) %>%
+  arrange(desc(n))
+
+#distinct menu items
+
+fastfood %>%
+  count(item)
+
+
+#GROUP_BY
+
+fastfood %>%
+  group_by(restaurant) %>%
+  summarise(mean_calories = mean(calories))
+
+#Average calories
+
+average_calories <- fastfood %>%
+  group_by(restaurant) %>%
+  summarise(mean_calories = mean(calories))
+
+#maximum total fat
+
+max_fat <- fastfood %>%
+  group_by(restaurant) %>%
+  summarise(max_total_fat = max(total_fat))
+
+#minimum cholesterol
+
+min_cholesterol <- fastfood %>%
+  group_by(restaurant) %>%
+  summarise(min_cholesterol = min(cholesterol))
+
+#datavis total fat each restaurant
+library(ggplot2)
+library(dplyr)
+library(lubridate)
+
+fastfood %>%
+  ggplot(aes(total_fat, restaurant, fill = restaurant)) +
+  geom_col() +
+  labs(x = "Restaurant", y = "Total Fat", colour = "Transmission", title = "Total Fat in Restaurant Food", caption = "Figure 1")
+```
+
+**I have used column chart for this type of data visualisation. This is because the data includes one discreet value *(restaurant)* and one continuous value *(total fat)* that needed to be depicted. Due to the bars, data is easy to read and follow.** 
+  
+
+```{r}
+#sum of sodium and cholesterol
+  
+  cholestrol_sodium <- fastfood$sodium + fastfood$cholesterol
+
+#remove salad
+
+subset(fastfood, select = -c(salad))
+
+#Mcdonalds to plot sugar variable against protein 
+
+fastfood %>%
+  filter(str_detect(restaurant, "Mcdonalds")) %>%
+  ggplot(aes(sugar, protein)) +
+  geom_point(colour = "red") +
+  scale_y_continuous(labels = scales::comma) +
+  labs(x = "Sugar", y = "Protein", colour = "Transmission", title = "Sugar-Protein in McD", caption = "Figure 2")
+
+
+```
+
