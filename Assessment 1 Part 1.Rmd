@@ -1,0 +1,72 @@
+---
+title: "Assessment 1"
+author: "Fatima Aftab 4662948"
+date: '2022-03-15'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+**2. Create the heading of the first level and call it RMarkdown editing.**
+
+# RMarkdown Editing
+
+**3. Write 2-3 sentences about RMarkdown (you can google this information or use resources recommended in class - no need to reference). 4. In the above use bold and italics for editing. 5. Review the suggested documentation on how to insert links in the .rmd file and include an in-text link to https://rmarkdown.rstudio.com/lesson-8.html.**
+
+*R Markdown supports dozens of static and dynamic output formats including* **HTML, PDF, MS Word, Beamer, HTML5 slides, Tufte-style handouts, books, dashboards, shiny applications, scientific articles, websites,** *and more.*
+
+Click [here](https://rmarkdown.rstudio.com/lesson-8.html) for more information.
+
+**6. Insert an R chunk and create a variable with this dataset
+https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2018/2018-09-04/fastfood_calories.csv**
+
+```{r}
+library(tidyverse)
+
+fastfood <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2018/2018-09-04/fastfood_calories.csv')
+```
+
+**7. Display the first 10 rows of the dataset using head() and kable(). Display the first 10 rows of the dataset and the first 5 variables.**
+
+```{r}
+#Display first 10 rows using head
+
+head(fastfood, 10)
+
+#Display first 10 rows using kable
+
+#install.packages("knitr")
+library(knitr)
+
+kable(head(fastfood, n=10))
+
+#Display first 10 rows, 5 variables using head
+
+head(fastfood[1:5], 10)
+
+#Display first 10 rows, 5 variables using kable
+
+kable(head(fastfood[1:5], 10))
+
+```
+
+**OR (ANOTHER OPTION):**
+
+**Display the first 10 rows of the dataset.**
+```{r}
+head(fastfood, 10) %>% 
+  kable()
+```
+
+**Display the first 10 rows of the dataset and the first 5 variables using kable() function.**
+
+```{r}
+kable(fastfood[1:10, 1:5])
+```
+
+
+
+

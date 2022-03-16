@@ -1,0 +1,122 @@
+---
+title: "Assessment 1 Part 2"
+author: "Fatima Aftab 4662948"
+date: '2022-03-15'
+output: html_document
+---
+
+**8. Display the observations that has more than 1000 calories.**
+```{r}
+library(tidyverse)
+
+fastfood <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2018/2018-09-04/fastfood_calories.csv')
+
+fastfood %>%
+  filter(calories>1000)
+```
+
+
+**9. Arrange observations with more than 40 in total_fat and more than 80 in total_carb in the descending order and save them to a new variable (dataset) called `dont_eat_this`.**
+
+```{r}
+dont_eat_this <- fastfood %>%
+  filter(total_fat > 40 & total_carb > 80)
+
+arrange(dont_eat_this, desc(total_fat))
+```
+
+**10. Using the initial dataset variable, use `case_when()` to create a new variable `heavy_food` which is equal to "heavy" when total calories are greater than 500, "low" when total calories are less than 250 and "average" for all other cases. Count the number of observations in each created category.**
+
+```{r}
+new_data_with_heavy_food <- fastfood %>%
+  mutate(heavy_food = case_when(calories > 500 ~ "heavy", calories < 250 ~ "low", T ~ "average"))
+
+spec(new_data_with_heavy_food)
+
+new_data_with_heavy_food %>%
+  count(heavy_food)
+```
+**11. Display the types of variables in the dataset using `skimr` package.**
+
+```{r}
+library(skimr)
+
+skim(new_data_with_heavy_food)
+
+skim(fastfood)
+```
+
+**12. Present the count observations from each restaurant in a descending order**
+
+```{r}
+fastfood %>%
+  count(restaurant) %>%
+  arrange(desc(n))
+```
+
+**Show the number of distnct items on a menu in the dataset.**
+
+```{r}
+fastfood %>%
+  count(item)
+```
+
+**13. Using groupings (group_by()), summarise and display the average number of calories for each restaurant.**
+
+```{r}
+fastfood %>%
+  group_by(restaurant) %>%
+  summarise(mean_calories = mean(calories))
+```
+
+**14. Add variables to the dataset, which: - calculates the average calories per type of restaurant and call it `average_calories`, -  calculates the maximum total_fat per type of restaurant and call it `max_fat`, -  calculates the minimum cholesterol per type of restaurant and call it `min_cholesterol`**
+
+```{r}
+average_calories <- fastfood %>%
+  group_by(restaurant) %>%
+  summarise(mean_calories = mean(calories))
+
+max_fat <- fastfood %>%
+  group_by(restaurant) %>%
+  summarise(max_total_fat = max(total_fat))
+
+min_cholesterol <- fastfood %>%
+  group_by(restaurant) %>%
+  summarise(min_cholesterol = min(cholesterol))
+```
+
+**15. Display the data vis of total fat per each type of restaurant. Write a narration (2-3 sentences) why you believe this type of data viz presents such information best.**
+
+**Below, I have used column chart for this type of data visualisation. This is because the data includes one discreet value *(restaurant)* and one continuous value *(total fat)* that needed to be depicted. Due to the bars, data is easy to read and follow.**
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(lubridate)
+
+fastfood %>%
+  ggplot(aes(total_fat, restaurant, fill = restaurant)) +
+  geom_col() +
+  labs(x = "Restaurant", y = "Total Fat", colour = "Transmission", title = "Total Fat in Restaurant Food", caption = "Figure 1")
+```
+
+**16. Add a variable to the dataset, which calculates the sum of cholesterol and sodium and call it `cholesterol_sodium`. Remove the variable `salad`**
+
+```{r}
+cholestrol_sodium <- fastfood$sodium + fastfood$cholesterol
+
+subset(fastfood, select = -c(salad))
+```
+
+**17. Use observations for Mcdonalds to plot sugar variable against protein with `geom_point()`.**
+
+```{r}
+fastfood %>%
+  filter(str_detect(restaurant, "Mcdonalds")) %>%
+  ggplot(aes(sugar, protein)) +
+  geom_point(colour = "red") +
+  scale_y_continuous(labels = scales::comma) +
+  labs(x = "Sugar", y = "Protein", colour = "Transmission", title = "Sugar-Protein in McD", caption = "Figure 2")
+```
+
+
